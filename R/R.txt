@@ -1,0 +1,88 @@
+2023.03.30
+
+R_download
+https://cran.r-project.org/bin/windows/base/
+
+R_studio
+https://posit.co/download/rstudio-desktop/
+
+1. R을 통한 데이터분석
+2. 통계
+
+
+*기본 데이터 타입 함수
+
+	(1) is.xxx (): 판별 함수
+	(2) as.xxx (): 변환 함수
+	
+1.Data Type(구조)
+---------------------------------------------------------
+배열부터 시작함 (Datatype = Numpy
+(1)스칼라(0차원)
+	숫자(numeric), 문자(character), boolean, factor, 결측치(NA, NaN, null, inf)
+	
+(2)Vector(1차원):default
+	1)기본 자료 구조
+	2)1차원 배열
+	3)인덱스 접근
+	4)동일한 자료형만 사용
+	5)c(), seq(), rep(), ...
+
+(3)Matrix(2차원)
+	1)행과 열의 2차원 배열
+	2)동일한 자료형만 사용
+	3)matrix(), rbind(), cbind(),....
+	
+	
+(4)DataFrame(2차원)
+	1) DB의 테이블 또는 python의 pandas에 있는 dataframe과 유사하다
+	2)컬럼 단위로 서로 다른 데이터 타입 사용 가능
+	3)data.frame(), read.csv(), read.delim(), read.table(), ... 
+	
+(5)Array(3차원 이상)
+	1)행, 열, 면의 3차원 배열 형태의 객체를 생성
+	2)array()
+
+(6)List(3차원 이상) - 데이터 임시저장목적으로 많이사용함
+	1)key 와 value로 구성
+	2)python의 dict와 유사
+	3)list(), unlist(), lapply(), sapply(), ...
+	
+----------------------------------------------------------
+Rstudio.cloud site 를 이용하면 온라인으로 사용가능
+
+** 패키지
+(1)설치 : install.packages("패키지명")
+(2)불러오기 : library(패키지명), require(패키지명)
+(3)삭제 : remove.packages(패키지명)
+
+2. Data Preprocessing
+----------------------------------------------------------
+** 순서: 데이터 탐색 (EDA) > 결측치 처리 > 이상치 처리 > Feature Engineering
+
+(1)데이터 탐색
+	1) 변수 확인
+	2) 변수 유형(범주형, 연속형, 문자형, 숫자형, ...)
+	3) 변수의 통계량 : 평균, 분산, 표준편차, 최빈값, 중간값, 분포, ...
+	4) 관계 차이 검정
+	
+(2)결측치 처리
+	1) 삭제
+	2) 대체
+		- 평균, 중간값, ...
+		- 예측값 : 선형 회귀분석, 로지스틱 회귀 분석
+(3) 이상치 처리
+	1) 이상치 탐색
+		- 시각적 확인 : box plot, scatter plot
+		- 통계적 확인 : 표준 잔차, leverage, Cook's D, ...
+	2) 이상치 처리
+		- 삭제
+		- 대체
+		- 리샘플링
+(4) Feature Engineering
+	1) Scaling : 단위 변경(정규화, 표준화)
+	2) Binning : 연속형 변수를 범주형 변수로 변환
+	3) Dummy : 변주형 변수를 연속형 변수로 변환
+	4) transform : 기존에 존재하는 변수의 성질을 이용해 다른 변수를 만드는 방법
+	
+	
