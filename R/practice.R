@@ -317,11 +317,110 @@ exam %>%
   mutate(total = math + english + science) %>% 
   arrange(total) %>% 
   head
-
+library(dplyr)
 # pg 144, Q1. mpg() 데이터 복사본을 만들고, cty 와 hwy 를 더한 '합산 연비 변수' 를 추가하세요
-
+mpg <- as.data.frame(ggplot2::mpg)
+mpg_copy <- mpg %>% mutate(total_yield = cty + hwy)
 #Q2. 앞에서 만든 '합산 연비 변수'를 2로 나눠 '평균 연비 변수'를 추가하세요
-
+mpg_copy<- mpg_copy %>% mutate(avr_yield = total_yield / 2)
+View(mpg_copy)
 #Q3. '평균 연비 변수'가 가장 높은 자동차 3종의 데이터를 출력하세요.
-
+mpg_copy %>% arrange(desc(avr_yield)) %>% head(3)
 #Q4. 1-3번 문제를 해결할 수 있는 하나로 연결된 dplyr 구문을 만들어 실행해 보세요. 데이터는 복사본 대신 mpg 원본을 이용하세요.
+
+mpg <- mpg %>% mutate(total_yield = cty + hwy,
+                      avr_yield = total_yield /2) %>% arrange(desc(avr_yield)) %>% head(3)
+mpg
+
+exam %>%  summarise(mean_math = mean(math))
+
+exam %>% 
+  group_by(class) %>% 
+  summarise(mean_math = mean(math))
+
+exam %>% 
+  group_by(class) %>% 
+  summarise(mean_math = mean(math),
+            sum_math = sum(math),
+            median_math = median(math),
+            n = n())
+
+mpg <- as.data.frame(ggplot2::mpg)
+mpg %>% 
+  group_by(manufacturer, drv) %>% 
+  summarise(mean_cty = mean(cty)) %>% 
+  head(10)
+
+mpg %>%
+  group_by(manufacturer) %>%
+  filter(class == "suv") %>%
+  mutate(total = (cty + hwy)/2) %>%
+  summarise(mean_total = mean(total)) %>%
+  arrange(desc(mean_total)) %>%
+  head(5)
+
+#pg150, Q1. mpg 데이터의 class는 "suv", "compact" 등 자동차를 특징에 따라 일곱 종류로 분류한 변수입니다. 어떤 차종의 도시 연비가 높은지 비교해 보려고 합니다. class 별 cty 평균을 구해보시요
+mpg %>% 
+  group_by(class) %>% 
+  summarise(mean_cty = mean(cty))
+#Q2. 앞 문제의 출력 결과는 class 가 알파벳 순으로 정렬되어있는데 cty 평균 높은순으로 정렬해서 출력해주세요
+mpg %>% 
+  group_by(class) %>% 
+  summarise(mean_cty = mean(cty)) %>% 
+  arrange(desc(mean_cty))
+
+#Q3. 어떤 회자 자동차의 hwy(고속도로 연비)가 가장 높은지 알아보려고 합니다. hwy 평균이 가장 높은 회사 세곳을 출력하세요.
+
+mpg %>% group_by(manufacturer) %>% 
+  summarise(mean_hwy = mean(hwy)) %>% 
+  arrange(desc(mean_hwy)) %>% 
+  head(3)
+
+#Q4. 어떤 회사에서 "compact"(경차) 차종을 가장 많이 생산하는지 알아보려고 합니다. 각 회사별 "compact" 차종 수를 내림차순으로 정렬해 출력하세요.
+
+mpg %>% group_by(manufacturer) %>% 
+  filter(class == "compact") %>% 
+  summarise(n = n()) %>% 
+  arrange(desc(n))
+
+test1 <- data.frame(id = c( 1,2,3,4,5),
+                    midterm = c(60, 80, 70, 90, 85))                                                                     
+test2 <- data.frame(id = c( 1,2,3,4,5),
+                   final = c(70, 83, 65, 95, 80)) 
+
+test1
+test2
+total <- left_join(test1, test2, by = "id")
+total
+
+name <- data.frame(class = c(1,2,3,4,5),
+                   teacher = c("kim", "lee", "park", "choi", "jung"))
+name
+
+exam_new <- left_join(exam, name, by = "class")
+exam_new
+
+group_a <- data.frame(id = c(1,2,3,4,5),
+                      test = c(60, 80, 70, 90, 85))
+
+group_b <- data.frame(id = c(6,7,8,9,10),
+                      test = c(70, 83, 65, 95, 80))
+
+group_a
+group_b
+
+group_all <- bind_rows(group_a, group_b)
+group_all
+
+fuel <- data.frame(fl = c("c", "d", "e", "p", "r"),
+                   price_fl = c(2.35, 2.38, 2.11, 2.76, 2.22))
+fuel
+#pg.156 Q1. mpg데이터에는 연료 종류를 나타낸 fl변수는 있지만 연료 가격을 나타낸 변수는 없습니다. 위에서 만든 fuel 데이터를 이용해 mpg 데이터에 price_fl(연료가격) 변수를 추가하세요.
+View(mpg)
+mpg <- left_join(mpg, fuel, by = "fl" )
+mpg %>% head
+View(mpg_fuel)
+#Q2. 연료가격 변수가 잘 추가 됬는지 확인하기 위해 model, fl, price_fl 변수를 추출해 앞부분 5행을 출력해 보세요.
+
+
+mpg %>% select(model, fl, price_fl) %>% head(5)
