@@ -424,3 +424,94 @@ View(mpg_fuel)
 
 
 mpg %>% select(model, fl, price_fl) %>% head(5)
+
+#pg 160. Q1. popadults는 해당 지역의 성인 인구, poptotal은 전체 인구를 나타냅니다. midwest 데이터에 '전체 인구 대비 미성년 인구 백분율' 변수를 추가하세요.
+library(ggplot2)
+library(dplyr)
+midwest_data <- as.data.frame(ggplot2::midwest)
+
+str(midwest_data)
+View(midwest_data)
+midwest_data <- midwest_data %>% mutate(per_children = (poptotal - popadults)/poptotal * 100)
+View(midwest_data)
+
+#Q2. 미성년 인구 백분율이 가장 높은 상위 5개 county(지역)의  미성년 인구 백분율을 출력하세요
+
+midwest_data %>%  select(county, per_children) %>% arrange(desc(per_children)) %>% head(5)
+
+#Q3. 분류표의 기준에 따라 미성년 비율 등급 변수를 추가하고, 각 등급에 몇 개의 지역이 있는지 알아보세요.
+
+midwest_data <- midwest_data %>% mutate(grade = ifelse(per_children >= 40, "large", ifelse(per_children > 30, "middle", "small")))
+table(midwest_data$grade)
+
+#Q4. popasian 은 해당 지역의 아시아인 인구를 나타냅니다. '전체 인구 대비 아시아인 인구 백분율' 변수를 추가하고 하위 10개 지역의 state(주), county(지역), 아시아인 인구 백분율을 출력하세요.
+
+midwest_data <- midwest_data %>% mutate(ratio_asian = popasian / poptotal * 100) %>% select(state, county, ratio_asian) %>% arrange(ratio_asian) %>% head(10)
+midwest_data
+
+df <- data.frame(sex = c("M", "F", NA, "M", "F"),
+                 score = c(5, 4, 3, 4, NA))
+df
+
+is.na(df)
+
+table(is.na(df))
+
+table(is.na(df$sex))
+
+table(is.na(df$score))
+
+mean(df$score)
+
+sum(df$score)
+
+library(dplyr)
+df %>% filter(is.na(score))
+
+df %>%  filter(!is.na(score))
+
+df_nomiss <- df %>% filter(!is.na(score))
+mean(df_nomiss$score)
+
+sum(df_nomiss$score)
+
+df_nomiss <- df %>% filter(!is.na(score) & !is.na(sex))
+df_nomiss
+
+df_nomiss2 <- na.omit(df)
+df_nomiss2
+
+mean(df$score, na.rm = T)
+
+sum(df$score, na.rm = T)
+
+exam <- read.csv("C:/seokwonna/Rwork/data/csv_exam.csv")
+exam[c(3, 8, 15),"math"] <- NA
+exam
+
+exam %>%  summarise(mean_math = mean(math))
+
+exam %>%  summarise(mean_math = mean(math, na.rm = T))
+
+exam %>% summarise(mean_math = mean(math, na.rm = T),
+                   sum_math = sum(math, na.rm = T),
+                   median_math = median(math, na.rm = T))
+
+mean(exam$math, na.rm = T)
+
+exam$math <- ifelse(is.na(exam$math), 55, exam$math)
+table(is.na(exam$math))
+exam
+mean(exam$math)
+
+#pg170, Q1. drv(구동방식)별로 hwy(고속도로 연비) 평균이 어떻게 다른지 알아보려고 합니다. 분석을 하기 전에 우선 두 변수에 결측치가 있는지 확인해야 합니다. drv 변수와 hwy 변수에 결측치가 몇 개 있는지 알아보세요.
+
+mpg <- as.data.frame(ggplot2::mpg)
+mpg[c(65, 124, 131, 153, 212), "hwy"] <- NA
+
+table(is.na(mpg$drv))
+table(is.na(mpg$hwy))
+#Q2. filter()를 이용해 hwy 변수의 결측치를 제외하고, 어떤 구동 방식의 hwy 평규이 높은지 알아보세요. 하나의 dplyr 구문으로 만들어야 합니다.
+
+mpg_delna <- mpg %>% filter(!is.na(mpg$hwy)) %>%  group_by(drv) %>% summarise(mean_hwy = mean(hwy))
+mpg_delna
