@@ -1,3 +1,4 @@
+#### start ####
 package_version(R.version)
 R.version
 
@@ -201,7 +202,7 @@ table(mpg$grade)
 qplot(mpg$grade)
 mpg$grade2 <- ifelse(mpg$total )
 
-#20230507
+#### 20230507 ####
 
 library(dplyr)
 
@@ -515,3 +516,122 @@ table(is.na(mpg$hwy))
 
 mpg_delna <- mpg %>% filter(!is.na(mpg$hwy)) %>%  group_by(drv) %>% summarise(mean_hwy = mean(hwy))
 mpg_delna
+
+#### 20230510 ####
+outlier <- data.frame(sex = c(1,2,1,3,2,1),
+                      score = c(5,4,3,4,2,6))
+outlier
+
+table(outlier$sex)
+
+table(outlier$score)
+
+outlier$sex <- ifelse(outlier$sex == 3, NA, outlier$sex)
+outlier
+
+outlier$score <- ifelse(outlier$score > 5, NA, outlier$score)
+outlier
+
+library(dplyr)
+
+outlier %>% 
+  filter(!is.na(sex) & !is.na(score)) %>% 
+  group_by(sex) %>% 
+  summarise(mean_score = mean(score))
+
+boxplot(mpg$hwy)
+
+boxplot(mpg$hwy)$stats
+
+mpg$hwy <- ifelse(mpg$hwy < 12 | mpg$hwy >37, NA, mpg$hwy)
+table(is.na(mpg$hwy))
+
+mpg %>% 
+  group_by(drv) %>% 
+  summarise(mean_hwy = mean(hwy, na.rm = T))
+
+#mpg데이터 이상치 만들기
+mpg <- as.data.frame(ggplot2::mpg)
+mpg[c(10,14,58,93), "drv"] <- "k"
+mpg[c(29,43, 129, 203), "cty"] <- c(3,4,39,42)
+
+#pg178, Q1. drv에 이상치가 있는지 확인하세요. 이상치를 결측 처리한 후 이상치가 사라졌는지 확인하세요. 결측 처리를 할때는 %in% 기호를 사용하세요.
+
+table(mpg$drv)
+mpg$drv <- ifelse(mpg$drv %in% c("4", "f", "r"), mpg$drv, NA)
+table(mpg$drv)
+
+#Q2. 상자 그림을 이용해 cty에 이상치가 있는지 확인하세요. 상자 그림의 통계치를 이용해 정상 범위를 벗어난 값을 결측 처리한 후 다시 상자 그림을 만들어 이상치가 사라졌는지 확인하세요.
+
+boxplot(mpg$cty)$stats
+mpg$cty <- ifelse(mpg$cty < 9 | mpg$cty > 26, NA, mpg$cty)
+boxplot(mpg$cty)
+
+#Q3, 두 변수의 이상치를 결측 처리 햇으니 이제 분석할 차례입니다. 이상치를 제외한 다음 drv 별로 cty 평균이 어떻게 다른지 알아보세요. 하나의 dplyr 구문으로 만들어야 합니다.
+mpg %>%
+  filter(!is.na(mpg$drv) & !is.na(mpg$cty)) %>% group_by(drv) %>% summarise(mean_cty = mean(cty))
+
+library(ggplot2)
+
+ggplot(data = mpg, aes(x = displ, y =hwy)) +
+  geom_point() +
+  xlim(3, 6) +
+  ylim(10, 30)
+
+#pg.188, Q1. mpg 데이터의 cty(도시 연비)와 hwy(고속도로 연비) 간에 어떤 관계가 있는지 알아보려고 합니다. X축은 cty, y 축은 hwy로 된 산점도를 만들어 보세요
+
+ggplot(data = mpg, aes(x= cty, y = hwy))+
+  geom_point()
+
+#Q2. 미국 지역ㅂㄹ 인구통계 정보를 담은 ggplot2 패키지의 midwest 데이터를 이용해 전체 인구와 아시아인 인구 간에 어떤 관계가 있는지 알아보려고 합니다. x 축은 poptotal(전체 인구), y축은 popasian(아시아인 인구)으로 된 산점도를 만들어 보세요. 전체 인구는 50만 명 이하, 아시아 인구는 1만명 이하인 지역만 산점도에 표시되게 설정하세요.
+
+midwest <- as.data.frame(ggplot2::midwest)
+
+ggplot(data = midwest, aes(x= poptotal, y= popasian)) + geom_point() + xlim(0, 5e+05) + ylim(0, 1e+04)
+
+library(dplyr)
+mpg <- as.data.frame(ggplot2::mpg)
+
+df_mpg <- mpg %>% 
+  group_by(drv) %>% 
+  summarise(mean_hwy = mean(hwy))
+
+df_mpg
+
+ggplot(data = df_mpg, aes(x = drv, y = mean_hwy)) + geom_col()
+
+ggplot(data = df_mpg, aes(x = reorder(drv, -mean_hwy), y = mean_hwy)) + geom_col()
+
+ggplot(data = mpg, aes(x=drv)) + geom_bar()
+
+ggplot(data = mpg, aes(x = hwy)) + geom_bar()
+
+#pg193, Q1 어떤 회사에서 생산한 "suv" 차종의 도시 연비가 높은지 알아보려고 합니다. "suv"차종을 대상으로 평균 cty(도시 연비)가 가장 높은 회사 다섯 곳을 막대 그래프로 표현해 보세요. 막대는 연비가 높은순으로 정렬하세요.
+mpg
+mpg_suv <- mpg %>% filter(class == "suv") %>% 
+  group_by(manufacturer) %>% 
+  summarise(mean_cty = mean(cty)) %>% 
+  arrange(desc(mean_cty)) %>% head(5)
+mpg_suv
+
+ggplot(data = mpg_suv,
+       aes(x= reorder(manufacturer, -mean_cty),
+           y= mean_cty)) + geom_col() 
+      
+#Q2, 자동차 중에서 어떤 class(자동차 종류)가 많은지 알아보려고 합니다. 자동차 종류별 빈도를 표현한 막대 그래프를 만들어 보세요.
+
+ggplot(data = mpg, aes(x = class)) + geom_bar()
+
+ggplot(data = economics, aes(x = date, y = unemploy)) + geom_line()
+
+#pg195, Q1 psavert(개인 저축률)가 시간에 따라 어떻게 변해 왔는지 알아보려고합니다. 시간에 다른 개인 저축률의 변화를 나타낸 시계열 그래프를 만들어 보세요.
+ 
+ggplot(data = economics, aes(x = date, y = psavert)) + geom_line()
+
+ggplot(data = mpg, aes( x = drv, y = hwy)) + geom_boxplot()
+
+ggplot(data = mpg, aes(x =displ, y = hwy)) + geom_point()
+ggplot(data = mpg, aes(x = displ, y = hwy)) + geom_point() + xlim(3,6) + ylim(10,30)
+
+#pg 198, Q1 class(자동차 종류)가 "compact", "subcompact", "suv" 인 자동차의 cty(도시연비) 가 어떻게 다른지 비교해 보려고 합니다. 세 차종의 cty를 나타낸 상자 그림을 만들어 보세요.
+
