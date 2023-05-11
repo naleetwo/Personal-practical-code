@@ -204,7 +204,7 @@ read.csv("emp.csv", col.name = c('사번', '이름', '급여'))
 
 read.csv("emp2.csv",fileEncoding = 'euc-kr', encoding = 'utf-8', header = F, col.name=c('사번', '이름', '급여'))
 aws <-read.delim("AWS_sample.txt", sep = "#")
-head(aws) #6개만 가져옴
+head(aws) # 6개만 가져옴
 
 View(aws) #dataframe으로 데이터 보여줌
 
